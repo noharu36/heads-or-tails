@@ -29,4 +29,10 @@ fn main() {
         }
     }
     println!("Heads: {}, Tails: {}", heads_count, tails_count);
+
+    if heads_count > tails_count {
+        println!("You won!")
+    } else {
+        println!("You lost.")
+    }
 }
