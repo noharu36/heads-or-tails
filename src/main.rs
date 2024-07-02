@@ -1,7 +1,20 @@
 use rand::Rng;
+use promptuity::prompts::Input;
+use promptuity::themes::FancyTheme;
+use promptuity::{Error, Promptuity, Term};
 
-fn main() {
-    println!("Tossing a coin...");
+fn main() -> Result<(), Error> {
+    let mut term = Term::default();
+    let mut theme = FancyTheme::default();
+    let mut p = Promptuity::new(&mut term, &mut theme);
+
+    p.term().clear()?;
+    p.begin()?;
+
+    let name = p.prompt(Input::new("Who are you?").with_placeholder("yourname"))?;
+    p.success(format!("Hello, {}!", name))?;
+
+    p.log("Tossing a coin...")?;
 
     let mut heads_count = 0;
     let mut tails_count = 0;
@@ -20,7 +33,7 @@ fn main() {
         }
 
         let result = if heads_in_round > tails_in_round { "Heads" } else { "Tails" };
-        println!("Round {}: {}", i, result);
+        p.info(format!("Round {}: {}", i, result))?;
         
         match result {
             "Heads" => heads_count += 1,
@@ -28,11 +41,14 @@ fn main() {
             _ => {}
         }
     }
-    println!("Heads: {}, Tails: {}", heads_count, tails_count);
+    p.with_outro(format!("Heads: {}, Tails: {}", heads_count, tails_count)).finish()?;
+
 
     if heads_count > tails_count {
         println!("You won!")
     } else {
         println!("You lost.")
     }
+
+    Ok(())
 }
